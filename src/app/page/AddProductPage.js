@@ -60,7 +60,7 @@ const ErrorMessage = styled.div`
 `;
 
 const ProductRegisterPage = () => {
-  const [productName, setProductName] = useState('');
+  const [name, setName] = useState('');
   const [category1, setCategory1] = useState('');
   const [category2, setCategory2] = useState('');
   const [price, setPrice] = useState('');
@@ -78,7 +78,7 @@ const ProductRegisterPage = () => {
     try {
       const token = localStorage.getItem('Authorization');
       await axios.post('/api/products', {
-        productName,
+        name,
         category1,
         category2,
         price,
@@ -103,7 +103,7 @@ const ProductRegisterPage = () => {
         <Form onSubmit={handleRegister}>
         {error && <ErrorMessage>{error}</ErrorMessage>}
           <Label>제품명</Label>
-          <Input value={productName} onChange={(e) => setProductName(e.target.value)} />
+          <Input value={name} onChange={(e) => setName(e.target.value)} />
 
           <Label>분류1</Label>
           <Select value={category1} onChange={(e) => setCategory1(e.target.value)}>
