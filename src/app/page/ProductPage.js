@@ -30,6 +30,8 @@ const Th = styled.th`
 const Td = styled.td`
   border: 1px solid #ddd;
   padding: 8px;
+  cursor: pointer;
+  background-color: ${props => props.selected ? '#f0f8ff' : 'transparent'};  
 `;
 
 const FilterContainer = styled.div`
@@ -67,9 +69,11 @@ const Button = styled.button`
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
+  const [selectedProductId, setSelectedProductId] = useState(null);
   const [category1, setCategory1] = useState('');
   const [category2, setCategory2] = useState('');
-  const [date, setDate] = useState('');
+  const [startDate, setStartDate] = useState(''); 
+  const [endDate, setEndDate] = useState(''); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -110,7 +114,8 @@ const ProductsPage = () => {
         params: {
           category1,
           category2,
-          date,
+          startDate,
+          endDate
         },
         headers: {
           Authorization: `${token}`,
@@ -120,7 +125,7 @@ const ProductsPage = () => {
     } catch (error) {
       console.error('There was an error!', error);
     }
-  }, [category1, category2, date]);
+  }, [category1, category2, startDate, endDate]);
 
   useEffect(() => {
     fetchProducts();
@@ -133,6 +138,46 @@ const ProductsPage = () => {
   const handleRegister = () => {
     navigate('/products/add');
   };
+
+  const handleEdit = () => {
+    if (selectedProductId) {
+      navigate(`/products/edit/${selectedProductId}`);
+    } else {
+      alert("수정할 제품을 선택하세요.");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (selectedProductId) {
+      const confirmDelete = window.confirm("정말로 이 제품을 삭제하시겠습니까?");
+      if (confirmDelete) {
+        try {
+          const token = localStorage.getItem("Authorization");
+          await axios.delete(`/api/product/${selectedProductId}`, {
+            headers: {
+              Authorization: `${token}`,
+            },
+          });
+          setProducts(products.filter(product => product.id !== selectedProductId));
+          setSelectedProductId(null);
+        } catch (error) {
+          console.error('There was an error!', error);
+          alert('제품 삭제 중 오류가 발생했습니다.');
+        }
+      }
+    } else {
+      alert("삭제할 제품을 선택하세요.");
+    }
+  };
+
+  const handleStartDateChange = (e) => {
+    setStartDate(e.target.value);
+  };
+
+  const handleEndDateChange = (e) => {
+    setEndDate(e.target.value);
+  };
+
 
   return (
     <MainContainer>
@@ -153,11 +198,18 @@ const ProductsPage = () => {
           </Select>
           <Input
             type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+            value={startDate}  
+            onChange={handleStartDateChange} 
+          />
+          <Input
+            type="date"
+            value={endDate} 
+            onChange={handleEndDateChange}  
           />
           <Button onClick={handleSearch}>검색</Button>
           <Button onClick={handleRegister}>제품등록</Button>
+          <Button onClick={handleEdit}>제품수정</Button>
+          <Button onClick={handleDelete}>제품삭제</Button>
         </FilterContainer>
         <Table>
           <thead>
@@ -174,15 +226,18 @@ const ProductsPage = () => {
           </thead>
           <tbody>
             {products.map((product, index) => (
-              <tr key={product.id}>
-                <Td>{index + 1}</Td>
-                <Td>{product.category1}</Td>
-                <Td>{product.category2}</Td>
-                <Td>{product.name}</Td>
-                <Td>{product.price}</Td>
-                <Td>{product.description}</Td>
-                <Td>{new Date(product.date).toLocaleDateString()}</Td>
-                <Td>{new Date(product.date).toLocaleDateString()}</Td>
+              <tr key={product.id}
+                onClick={() => setSelectedProductId(product.id)}
+                style={{ backgroundColor: selectedProductId === product.id ? '#f0f8ff' : 'transparent' }}
+              >
+                <Td selected={selectedProductId === product.id}>{index + 1}</Td>
+                <Td selected={selectedProductId === product.id}>{product.category1}</Td>
+                <Td selected={selectedProductId === product.id}>{product.category2}</Td>
+                <Td selected={selectedProductId === product.id}>{product.name}</Td>
+                <Td selected={selectedProductId === product.id}>{product.price}</Td>
+                <Td selected={selectedProductId === product.id}>{product.description}</Td>
+                <Td selected={selectedProductId === product.id}>{new Date(product.creatDate).toLocaleDateString()}</Td>
+                <Td selected={selectedProductId === product.id}>{new Date(product.updateDate).toLocaleDateString()}</Td>
               </tr>
             ))}
           </tbody>

@@ -6,6 +6,7 @@ import MainPage from './app/page/MainPage';
 import Signup from './app/page/SignUp'; 
 import ProductPage from './app/page/ProductPage';
 import AddProduct from './app/page/AddProductPage';
+import ProductEditPage from './app/page/ProductEditPage';
 
 
 const App = () => {
@@ -18,6 +19,7 @@ const App = () => {
         <Route path="/join" element={<Signup />} />
         <Route path="/products" element={<ProductPage />} />
         <Route path="/products/add" element={<AddProduct />} />
+        <Route path="/products/edit/:id" element={<ProductEditPage />} /> 
       </Routes>
     </Router>
   );
