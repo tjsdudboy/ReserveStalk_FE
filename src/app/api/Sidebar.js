@@ -28,23 +28,24 @@ const SidebarButton = styled.button`
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const id = sessionStorage.getItem('username');
 
   const handleNavigation = (endpoint) => {
     if (endpoint) {
-      // For simplicity, redirecting to endpoint directly. Adjust as needed.
       navigate(endpoint);
     }
   };
 
   return (
     <SidebarContainer>
+      <SidebarButton onClick={() => handleNavigation('/main')}>메인화면</SidebarButton>
       <SidebarButton onClick={() => handleNavigation('/products')}>제품조회</SidebarButton>
-      <SidebarButton onClick={() => handleNavigation('/stockInOut')}>입출고 등록</SidebarButton>
+      <SidebarButton onClick={() => handleNavigation('/stockInOut/edit')}>입출고 등록</SidebarButton>
       <SidebarButton onClick={() => handleNavigation('/stockInOut')}>입출고 조회</SidebarButton>
       <SidebarButton onClick={() => handleNavigation('/stock')}>재고관리</SidebarButton>
       <SidebarButton onClick={() => alert('예약 내역 확인 기능은 아직 구현되지 않았습니다.')}>예약 내역 확인</SidebarButton>
       <SidebarButton onClick={() => alert('TODO 기능은 아직 구현되지 않았습니다.')}>TODO</SidebarButton>
-      <SidebarButton onClick={() => handleNavigation('/checkPassword')}>마이페이지</SidebarButton>
+      <SidebarButton onClick={() => handleNavigation(`/checkPassword/${id}`)}>마이페이지</SidebarButton>
       <SidebarButton onClick={() => alert('로그아웃 기능은 아직 구현되지 않았습니다.')}>로그아웃</SidebarButton>
     </SidebarContainer>
   );
